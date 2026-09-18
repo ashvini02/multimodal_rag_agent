@@ -1,0 +1,31 @@
+deepagents
+openai
+langchain
+langchain-community
+langchain-qdrant
+langchain-classic
+langchain-cohere
+langchain-google-genai
+langchain-groq
+langchain-openai
+langchain-huggingface
+qdrant-client
+python-dotenv
+
+# Ingestion — format-specific parsers (PDF, PPTX, XLSX/CSV only —
+# DOCX intentionally excluded, not in this task's scope)
+pdfplumber
+python-pptx
+pandas
+openpyxl
+
+# OCR / vision fallback
+pytesseract
+Pillow
+google-generativeai
+
+# Embeddings (local, free — all-MiniLM-L6-v2)
+sentence-transformers
+
+# UI
+streamlit
