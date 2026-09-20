@@ -26,7 +26,7 @@ def session_collection_name(session_id: str) -> str:
     return f"docs_{session_id}"
 
 
-def _load_hash_index() -> dict[str, dict[str, str]]:
+def load_hash_index() -> dict[str, dict[str, str]]:
     if not HASH_INDEX_PATH.exists():
         return {}
     try:
@@ -37,14 +37,14 @@ def _load_hash_index() -> dict[str, dict[str, str]]:
         return {}
 
 
-def _save_hash_index(index: dict[str, dict[str, str]]) -> None:
+def save_hash_index(index: dict[str, dict[str, str]]) -> None:
     with HASH_INDEX_PATH.open("w", encoding="utf-8") as f:
         json.dump(index, f, indent=2, sort_keys=True)
 
 
 def get_hash_record(file_hash: str) -> dict[str, str] | None:
     """Return the previous session record for this file hash, if any."""
-    index = _load_hash_index()
+    index = load_hash_index()
     record = index.get(file_hash)
     if not record:
         return None
@@ -53,19 +53,19 @@ def get_hash_record(file_hash: str) -> dict[str, str] | None:
 
 def register_hash(file_hash: str, session_id: str, collection_name: str) -> None:
     """Persist the fact that this exact file hash is already available in a session collection."""
-    index = _load_hash_index()
+    index = load_hash_index()
     index[file_hash] = {
         "session_id": session_id,
         "collection_name": collection_name,
     }
-    _save_hash_index(index)
+    save_hash_index(index)
 
 
 def clear_stale_hash_record(file_hash: str) -> None:
     """Remove a hash mapping when the referenced collection no longer exists."""
-    index = _load_hash_index()
+    index = load_hash_index()
     index.pop(file_hash, None)
-    _save_hash_index(index)
+    save_hash_index(index)
 
 
 def collection_has_file_hash(client, collection_name: str, file_hash: str) -> bool:
