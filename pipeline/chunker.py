@@ -136,12 +136,13 @@ def chunk_table_block(block: Block, max_chars: int = DEFAULT_MAX_CHARS) -> list[
         ))
 
     for row in body_rows:
-        row_md_len = char_len(" | ".join(row))
+        clean_row = ["" if cell is None else str(cell) for cell in row]
+        row_md_len = char_len(" | ".join(clean_row))
         if current_rows and (current_chars + row_md_len > max_chars):
             flush(len(chunks))
             current_rows = []
             current_chars = header_chars  # every new chunk restarts with header chunks
-        current_rows.append(row)
+        current_rows.append(clean_row)
         current_chars += row_md_len
 
     flush(len(chunks))
@@ -156,17 +157,20 @@ def chunk_table_block(block: Block, max_chars: int = DEFAULT_MAX_CHARS) -> list[
 
 
 def rows_to_markdown_table(header: list[str], rows: list[list[str]]) -> str:
-    out = ["| " + " | ".join(header) + " |",
-           "| " + " | ".join(["---"] * len(header)) + " |"]
+    clean_header = ["" if cell is None else str(cell) for cell in header]
+    out = ["| " + " | ".join(clean_header) + " |",
+           "| " + " | ".join(["---"] * len(clean_header)) + " |"]
     for row in rows:
-        row = row + [""] * (len(header) - len(row))
-        out.append("| " + " | ".join(row[:len(header)]) + " |")
+        clean_row = ["" if cell is None else str(cell) for cell in row]
+        clean_row = clean_row + [""] * (len(clean_header) - len(clean_row))
+        out.append("| " + " | ".join(clean_row[:len(clean_header)]) + " |")
     return "\n".join(out)
 
 
 def rows_to_markdown_pair(header: list[str]) -> str:
-    return ("| " + " | ".join(header) + " |\n"
-            "| " + " | ".join(["---"] * len(header)) + " |")
+    clean_header = ["" if cell is None else str(cell) for cell in header]
+    return ("| " + " | ".join(clean_header) + " |\n"
+            "| " + " | ".join(["---"] * len(clean_header)) + " |")
 
 
 
